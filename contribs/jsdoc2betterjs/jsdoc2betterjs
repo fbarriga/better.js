@@ -32,6 +32,8 @@ if( process.argv[2] === '-h' || process.argv[2] === undefined ){
 	console.log('')
 	console.log('\t--tolerate-empty-description	Tolerate empty descriptions on jsdoc params')
 	console.log('')
+	console.log('\t--include-require automatically prepend require("better.js") to generated code')
+	console.log('')
 	console.log('\t-h	Display inline help')
 	console.log('')
 	console.log('\t-v	Display version')
@@ -50,6 +52,7 @@ if( process.argv[2] === '-v' ){
 var cmdlineOptions	= {
 	appendOutputFilename		: false,
 	tolerateEmptyDescription	: false,
+	includeRequire				: true,
 
 	strictParams		: false,
 	strictReturns		: false,
@@ -68,6 +71,9 @@ for(var i = 2; process.argv[i] !== undefined; i++){
 		continue;
 	} else 	if( process.argv[i] === '--tolerate-empty-description' ) {
 		cmdlineOptions.tolerateEmptyDescription = true
+		continue;
+	} else 	if( process.argv[i] === '--include-require' ) {
+		cmdlineOptions.includeRequire = true
 		continue;
 	}else if( process.argv[i] === '-s' ){
 		cmdlineOptions.strictParams	= true
@@ -121,6 +127,9 @@ cmdlineOptions.fileNames.forEach(function(sourceFileName){
 console.assert(cmdlineOptions.codeFolderName === null)
 		}
 
+		if( cmdlineOptions.includeRequire === true ) {
+			code = "var Better = Better || require('better.js');\n" + code;
+		}
 /**
  * TODO make some sanity checck like relative path
  * TODO test the sourcemap writing with the codeFolderName
