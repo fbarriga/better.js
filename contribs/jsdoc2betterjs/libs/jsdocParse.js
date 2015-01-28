@@ -143,6 +143,7 @@ jsdocParse.parseJsdoc	= function(jsdocContent, cmdlineOptions){
 			if( paramType.toLowerCase() === 'number' )	return 'Number'
 			if( paramType.toLowerCase() === 'date' )	return 'Date'
 			if( paramType.toLowerCase() === 'array' )	return 'Array'
+			if( paramType.toLowerCase() === 'string' )	return 'String'
 
 			// from http://usejsdoc.org/tags-type.html
 
@@ -159,6 +160,7 @@ jsdocParse.parseJsdoc	= function(jsdocContent, cmdlineOptions){
 			// honor "@type {Number=} - an option number"
 			if( paramType.match(/=$/i) )	return canonizeType(paramType.slice(0,-1))+'|undefined'
 
+			console.warn( "warning, unknown type: ", paramType );
 			return paramType
 		}
 	}
