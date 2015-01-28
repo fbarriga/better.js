@@ -46,6 +46,8 @@ if( process.argv[2] === '-v' ){
 //		Comment								//
 //////////////////////////////////////////////////////////////////////////////////
 var cmdlineOptions	= {
+	appendOutputFilename	: false,
+
 	strictParams		: false,
 	strictReturns		: false,
 	privatizeClasses	: false,
@@ -58,7 +60,10 @@ var cmdlineOptions	= {
 }
 
 for(var i = 2; process.argv[i] !== undefined; i++){
-	if( process.argv[i] === '-s' ){
+	if( process.argv[i] === '-w' ) {
+		cmdlineOptions.appendOutputFilename = true
+		continue;
+	}else if( process.argv[i] === '-s' ){
 		cmdlineOptions.strictParams	= true
 		cmdlineOptions.strictReturns	= true
 		continue;
@@ -115,8 +120,13 @@ console.assert(cmdlineOptions.codeFolderName === null)
  * TODO test the sourcemap writing with the codeFolderName
  * TODO find better naming
  */
-		// honor cmdlineOptions.codeFolderName
-		if( cmdlineOptions.codeFolderName !== null ){
+		if( cmdlineOptions.appendOutputFilename === true ){
+			var srcFilename = sourceFileName.split('.js')[0];
+			var dstJSName = srcFilename + ".better.js";
+			// actually write the destination files
+			require('fs').writeFileSync(dstJSName, code, 'utf8');
+		}
+		else if( cmdlineOptions.codeFolderName !== null ){ // honor cmdlineOptions.codeFolderName
 			var codeFolderName	= cmdlineOptions.codeFolderName
 			var codeFolderRoot	= require('path').dirname(codeFolderName)
 			var relativePath	= require('path').relative(codeFolderRoot, sourceFileName)
