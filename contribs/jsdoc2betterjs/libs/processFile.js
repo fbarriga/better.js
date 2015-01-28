@@ -57,7 +57,7 @@ var processFile	= function processFile(filename, cmdlineOptions, onProcessed){
 
 				// get jsdocJson for this node
 				var lineNumber	= path.value.loc.start.line-1
-				var jsdocJson	= jsdocParse.extractJsdocJson(contentLines, lineNumber)
+				var jsdocJson	= jsdocParse.extractJsdocJson(contentLines, lineNumber, cmdlineOptions )
 				// if no jsdocJson, do nothing
 				if( jsdocJson === null )	return
 
@@ -80,7 +80,7 @@ var processFile	= function processFile(filename, cmdlineOptions, onProcessed){
 
 				// get jsdocContent for this node
 				var lineNumber	= path.value.loc.start.line-1
-				var jsdocJson	= jsdocParse.extractJsdocJson(contentLines, lineNumber)
+				var jsdocJson	= jsdocParse.extractJsdocJson(contentLines, lineNumber, cmdlineOptions )
 				// if no jsdocContent, do nothing
 				if( jsdocJson === null )	return
 
@@ -101,7 +101,7 @@ var processFile	= function processFile(filename, cmdlineOptions, onProcessed){
 
 				// get jsdocContent for this node
 				var lineNumber	= path.value.loc.start.line-1
-				var jsdocJson	= jsdocParse.extractJsdocJson(contentLines, lineNumber)
+				var jsdocJson	= jsdocParse.extractJsdocJson(contentLines, lineNumber, cmdlineOptions )
 				// if no jsdocContent, do nothing
 				if( jsdocJson === null )	return
 

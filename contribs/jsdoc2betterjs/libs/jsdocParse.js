@@ -9,9 +9,10 @@ if( typeof(window) === 'undefined' )	module.exports	= jsdocParse;
  * parse jsdoc comment and return a 'json-ified' version of it
  * 
  * @param  {String} jsdocContent String containing the content
+ * @param  {Object} cmdlineOptions [description]
  * @return {Object} the json object
  */
-jsdocParse.parseJsdoc	= function(jsdocContent){
+jsdocParse.parseJsdoc	= function(jsdocContent, cmdlineOptions){
 	var lines	= jsdocContent.split('\n')
 
 	// remove first and last line
@@ -55,12 +56,18 @@ jsdocParse.parseJsdoc	= function(jsdocContent){
 
 		// console.log('tagName', tagName )
 		if( tagName === 'param' ){
-			var matches	= line.match(/^@([^\s]+)\s+{([^\s]+)}\s+([^\s]+)\s+(.*)$/)
-			console.assert(matches && matches.length === 5, 'Malformed tag: ' + line);
+			var matches;
+			if( cmdlineOptions.tolerateEmptyDescription ) {
+				matches = line.match(/^@([^\s]+)\s+{([^\s]+)}\s+([^\s]+)\s*(.*)$/)
+				console.assert( matches && ( matches.length === 4 || matches.length === 5), 'Malformed tag: ' + line );
+			} else {
+				matches = line.match(/^@([^\s]+)\s+{([^\s]+)}\s+([^\s]+)\s+(.*)$/)
+				console.assert( matches && matches.length === 5, 'Malformed tag: ' + line );
+			}
 			// console.log('matches', matches )
 			var paramType		= matches[2]
 			var paramName		= matches[3]
-			var paramDescription	= matches[4]
+			var paramDescription	= matches[4] || "empty description"
 			output.params[paramName]	= {
 				type		: canonizeType(paramType),
 				description	: paramDescription
@@ -237,16 +244,17 @@ jsdocParse.extractJsdocContent	= function(lines, bottomLine){
  * 
  * @param  {String[]} 	lines      [description]
  * @param  {Number}	bottomLine [description]
+ * @param  {Object} cmdlineOptions [description]
  * @return {Object|null}           [description]
  */
-jsdocParse.extractJsdocJson	= function(lines, bottomLine){
+jsdocParse.extractJsdocJson	= function(lines, bottomLine, cmdlineOptions){
 	// get jsdocContent
 	var jsdocContent	= jsdocParse.extractJsdocContent(lines, bottomLine)
 	// if no jsdocContent, do nothing
 	if( jsdocContent === null )	return null
 
 	// get json version of jsdocContent
-	var jsdocJson	= jsdocParse.parseJsdoc( jsdocContent )
+	var jsdocJson	= jsdocParse.parseJsdoc( jsdocContent, cmdlineOptions )
 
 	return jsdocJson
 }

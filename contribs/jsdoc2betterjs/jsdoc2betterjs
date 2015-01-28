@@ -30,6 +30,8 @@ if( process.argv[2] === '-h' || process.argv[2] === undefined ){
 	console.log('\t--property	Enable Better.Property (beta)')
 	console.log('\t--noproperty	Disable Better.Property (beta)')
 	console.log('')
+	console.log('\t--tolerate-empty-description	Tolerate empty descriptions on jsdoc params')
+	console.log('')
 	console.log('\t-h	Display inline help')
 	console.log('')
 	console.log('\t-v	Display version')
@@ -46,7 +48,8 @@ if( process.argv[2] === '-v' ){
 //		Comment								//
 //////////////////////////////////////////////////////////////////////////////////
 var cmdlineOptions	= {
-	appendOutputFilename	: false,
+	appendOutputFilename		: false,
+	tolerateEmptyDescription	: false,
 
 	strictParams		: false,
 	strictReturns		: false,
@@ -62,6 +65,9 @@ var cmdlineOptions	= {
 for(var i = 2; process.argv[i] !== undefined; i++){
 	if( process.argv[i] === '-w' ) {
 		cmdlineOptions.appendOutputFilename = true
+		continue;
+	} else 	if( process.argv[i] === '--tolerate-empty-description' ) {
+		cmdlineOptions.tolerateEmptyDescription = true
 		continue;
 	}else if( process.argv[i] === '-s' ){
 		cmdlineOptions.strictParams	= true
