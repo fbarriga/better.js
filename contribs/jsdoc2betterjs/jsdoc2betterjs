@@ -34,6 +34,8 @@ if( process.argv[2] === '-h' || process.argv[2] === undefined ){
 	console.log('')
 	console.log('\t--include-require automatically prepend require("better.js") to generated code')
 	console.log('')
+	console.log('\t--overwrite overwrite the original file with the generated output (WARNING!)')
+	console.log('')
 	console.log('\t-h	Display inline help')
 	console.log('')
 	console.log('\t-v	Display version')
@@ -53,6 +55,7 @@ var cmdlineOptions	= {
 	appendOutputFilename		: false,
 	tolerateEmptyDescription	: false,
 	includeRequire				: true,
+	overwrite					: false,
 
 	strictParams		: false,
 	strictReturns		: false,
@@ -71,6 +74,9 @@ for(var i = 2; process.argv[i] !== undefined; i++){
 		continue;
 	} else 	if( process.argv[i] === '--tolerate-empty-description' ) {
 		cmdlineOptions.tolerateEmptyDescription = true
+		continue;
+	} else 	if( process.argv[i] === '--overwrite' ) {
+		cmdlineOptions.overwrite = true
 		continue;
 	} else 	if( process.argv[i] === '--include-require' ) {
 		cmdlineOptions.includeRequire = true
@@ -135,7 +141,11 @@ console.assert(cmdlineOptions.codeFolderName === null)
  * TODO test the sourcemap writing with the codeFolderName
  * TODO find better naming
  */
-		if( cmdlineOptions.appendOutputFilename === true ){
+		if( cmdlineOptions.overwrite === true ){
+			// actually write the destination files
+			require('fs').writeFileSync(sourceFileName, code, 'utf8');
+		}
+		else if( cmdlineOptions.appendOutputFilename === true ){
 			var srcFilename = sourceFileName.split('.js')[0];
 			var dstJSName = srcFilename + ".better.js";
 			// actually write the destination files
