@@ -73,11 +73,16 @@ jsdocParse.parseJsdoc	= function(jsdocContent, cmdlineOptions){
 				description	: paramDescription
 			}
 		}else if( tagName === 'return' ||  tagName === 'returns' ){
-			var matches	= line.match(/^@([^\s]+)\s+{([^\s]+)}\s+(.*)$/)
-			console.assert(matches && matches.length === 4, 'Malformed tag: ' + line);
+			if( cmdlineOptions.tolerateEmptyDescription ) {
+				matches = line.match(/^@([^\s]+)\s+{([^\s]+)}\s*(.*)$/)
+				console.assert( matches && ( matches.length === 3 || matches.length === 4), 'Malformed tag: ' + line );
+			} else {
+				matches = line.match(/^@([^\s]+)\s+{([^\s]+)}\s+(.*)$/)
+				console.assert( matches && matches.length === 4, 'Malformed tag: ' + line );
+			}
 			// console.log('matches', matches )
 			var paramType		= matches[2]
-			var paramDescription	= matches[3]
+			var paramDescription	= matches[3] || "empty description"
 			output.return		= {
 				type		: canonizeType(paramType),
 				description	: paramDescription
