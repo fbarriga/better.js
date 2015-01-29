@@ -74,9 +74,13 @@ StrongTyping.fn	= function(originalFn, paramsTypes, returnTypes){
  * 
  * @param  {*} value the value to check
  * @param  {Array.<function>} types the types allowed for this variable
+ * @param  {?boolean} tolerate_cast (if type is number is also going to pass for string check)
  * @return {boolean} return isValid, so true if types matche, false otherwise
  */
-StrongTyping.value	= function(value, types){
+StrongTyping.value	= function(value, types, tolerate_cast){
+	if( tolerate_cast == null )
+		tolerate_cast = true;  // FIXME: We should use this parameter
+
 	// handle parameter polymorphism
 	if( types instanceof Array === false )	types	= [types];
 	// if types array is empty, default to ['always'], return true as in valid
@@ -88,7 +92,7 @@ StrongTyping.value	= function(value, types){
 		if( type === Number ){
 			var valid	= typeof(value) === 'number';
 		}else if( type === String ){
-			var valid	= typeof(value) === 'string';
+			var valid	= typeof(value) === 'string' || ( tolerate_cast && typeof(value) === 'number' );
 		}else if( type === Boolean ){
 			var valid	= typeof(value) === 'boolean'
 		}else if( type === Function ){
