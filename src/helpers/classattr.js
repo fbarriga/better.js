@@ -50,7 +50,8 @@ var ClassAttr	= function(originalCtor, attributes){
 			var allowedTypes	= attributes.arguments
 			for(var i = 0; i < allowedTypes.length; i++){
 				var isValid	= StrongTyping.value(args[i], allowedTypes[i]);			
-				console.assert(isValid, className + ': argument['+i+'] type is invalid. MUST be of type', StrongTyping.typename(allowedTypes[i]), '  Argument type is', StrongTyping.typename(args[i]))
+				console.assert(isValid, className + ': argument['+i+'] type is invalid. MUST be of type',
+					StrongTyping.typename(allowedTypes[i]), '  Argument type is', StrongTyping.typename(args[i]), ' value: ', args[i])
 			}
 		}
 
