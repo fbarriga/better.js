@@ -1155,9 +1155,13 @@ StrongTyping.fn	= function(originalFn, paramsTypes, returnTypes){
  * 
  * @param  {*} value the value to check
  * @param  {Array.<function>} types the types allowed for this variable
+ * @param  {?boolean} tolerate_cast (if type is number is also going to pass for string check)
  * @return {boolean} return isValid, so true if types matche, false otherwise
  */
-StrongTyping.value	= function(value, types){
+StrongTyping.value	= function(value, types, tolerate_cast){
+	if( tolerate_cast == null )
+		tolerate_cast = true;  // FIXME: We should use this parameter
+
 	// handle parameter polymorphism
 	if( types instanceof Array === false )	types	= [types];
 	// if types array is empty, default to ['always'], return true as in valid
@@ -1169,7 +1173,7 @@ StrongTyping.value	= function(value, types){
 		if( type === Number ){
 			var valid	= typeof(value) === 'number';
 		}else if( type === String ){
-			var valid	= typeof(value) === 'string';
+			var valid	= typeof(value) === 'string' || ( tolerate_cast && typeof(value) === 'number' );
 		}else if( type === Boolean ){
 			var valid	= typeof(value) === 'boolean'
 		}else if( type === Function ){
@@ -1411,7 +1415,8 @@ var FunctionAttr	= function(originalFn, attributes){
 			console.assert(args.length <= allowedTypes.length, functionName + ': received '+args.length+' parameters but allows only '+allowedTypes.length+'!');
 			for(var i = 0; i < allowedTypes.length; i++){
 				var isValid	= StrongTyping.value(args[i], allowedTypes[i]);
-				console.assert(isValid, functionName + ': argument['+i+'] type is invalid. MUST be of type', StrongTyping.typename(allowedTypes[i]), '  Argument type is', StrongTyping.valuetypenames(args[i]))
+				console.assert(isValid, functionName + ': argument['+i+'] type is invalid. MUST be of type',
+					StrongTyping.typename(allowedTypes[i]), '  Argument type is', StrongTyping.valuetypenames(args[i]), ' value: ', args[i])
 			}			
 		}
 	}, function(returnedValue, instance, args){
@@ -1420,7 +1425,8 @@ var FunctionAttr	= function(originalFn, attributes){
 			var allowedTypes= attributes.return
 	// console.log('blabla', arguments)
 			var isValid	= StrongTyping.value(returnedValue, allowedTypes)
-			console.assert(isValid, functionName + ': invalid type for returned value. MUST be of type', StrongTyping.typename(allowedTypes), '  Returned type is', StrongTyping.valuetypenames(returnedValue))
+			console.assert(isValid, functionName + ': invalid type for returned value. MUST be of type',
+				StrongTyping.typename(allowedTypes), '  Returned type is', StrongTyping.valuetypenames(returnedValue), ' value: ', returnedValue)
 		}
 	})
 	
@@ -1549,7 +1555,8 @@ var ClassAttr	= function(originalCtor, attributes){
 			var allowedTypes	= attributes.arguments
 			for(var i = 0; i < allowedTypes.length; i++){
 				var isValid	= StrongTyping.value(args[i], allowedTypes[i]);			
-				console.assert(isValid, className + ': argument['+i+'] type is invalid. MUST be of type', StrongTyping.typename(allowedTypes[i]), '  Argument type is', StrongTyping.typename(args[i]))
+				console.assert(isValid, className + ': argument['+i+'] type is invalid. MUST be of type',
+					StrongTyping.typename(allowedTypes[i]), '  Argument type is', StrongTyping.typename(args[i]), ' value: ', args[i])
 			}
 		}
 
