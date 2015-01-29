@@ -136,12 +136,12 @@ jsdocParse.parseJsdoc	= function(jsdocContent, cmdlineOptions){
 		return processOne(type)
 
 		/**
-		 * translate name to @type
-		 *
-		 * @param {String} paramType - the type as a string from jsdoc
-		 * @return {String|null}	   The type as a string for better.js or null
+		 * process one @type
+		 * 
+		 * @param  {String} paramType - the type as a string from jsdoc
+		 * @return {String}           The type as a string for better.js
 		 */
-		function translateName( paramType ) {
+		function processOne(paramType){		
 			if( paramType.toLowerCase() === 'function' )	return 'Function'
 			if( paramType.toLowerCase() === 'object' )	return 'Object'
 			if( paramType.toLowerCase() === 'boolean' )	return 'Boolean'
@@ -149,18 +149,6 @@ jsdocParse.parseJsdoc	= function(jsdocContent, cmdlineOptions){
 			if( paramType.toLowerCase() === 'date' )	return 'Date'
 			if( paramType.toLowerCase() === 'array' )	return 'Array'
 			if( paramType.toLowerCase() === 'string' )	return 'String'
-			return null;
-		}
-
-		/**
-		 * process one @type
-		 * 
-		 * @param  {String} paramType - the type as a string from jsdoc
-		 * @return {String}		   The type as a string for better.js
-		 */
-		function processOne(paramType){
-			if( translateName( paramType ) != null )
-				return translateName(paramType );
 
 			// from http://usejsdoc.org/tags-type.html
 
@@ -170,21 +158,14 @@ jsdocParse.parseJsdoc	= function(jsdocContent, cmdlineOptions){
 			// honor "@type {!Number} - an number but never null"
 			// - return Number|"nonnull"
 			if( paramType[0] === '!' )	return canonizeType(paramType.slice(1))+'|"nonnull"'
-
 			// honor "@type {Number[]} - an array of number"
-			var s = paramType.match(/(\w*)\[\]$/)
-			if( s )
-				return "'Array." + translateName( s[1] ) + "'"
-
+			if( paramType.match(/\[\]$/) )	return 'Array'
 			// honor "@type {Array.<Number>} - an array of number"
-			var s = paramType.match(/^Array\.(\w*)/i)
-			if( s )
-				return "'Array." + translateName( s[1] ) + "'"
-
+			if( paramType.match(/^Array\./i) )	return 'Array'
 			// honor "@type {Number=} - an option number"
 			if( paramType.match(/=$/i) )	return canonizeType(paramType.slice(0,-1))+'|undefined'
 
-			console.warn( "warning, unknown type2: ", paramType );
+			console.warn( "warning, unknown type: ", paramType );
 			return paramType
 		}
 	}
