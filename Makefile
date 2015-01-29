@@ -42,14 +42,17 @@ minify: build
 publish: minify
 	npm publish
 
-JSDOC_ROOT	= $(HOME)/opt/jsdoc_toolkit-2.4.0/jsdoc-toolkit
+ifndef JSDOC_ROOT
+	JSDOC_ROOT	= $(HOME)/opt/jsdoc_toolkit-2.4.0/jsdoc-toolkit
+endif
+
 docs:
 	java -jar ${JSDOC_ROOT}/jsrun.jar ${JSDOC_ROOT}/app/run.js	\
 			-D="noGlobal:true"				\
 			-D="title:better.js library"			\
-			-t=${JSDOC_ROOT}/templates/Codeview/		\
+			-t=${JSDOC_ROOT}/templates/jsdoc		\
 			-d=docs/jsdocs/					\
-			src/*.js src/helpers/*.js examples/helpers/*.js
+			src/*.js src/helpers/*.js
 
 .PHONY: docs build minify
 
